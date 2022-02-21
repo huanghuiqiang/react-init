@@ -269,6 +269,15 @@ const schema = {
 
 export default () => {
   const [loading, setLoading] = useState(true)
+  const [schemaValue, setSchemaValue] = useState({});
+  useEffect(() => {
+    setTimeout(() => {
+      setSchemaValue(schema);
+      setLoading(false)
+    }, 1000)
+  }, [])
+
+
   useEffect(() => {
     setTimeout(() => {
       form.setInitialValues({
@@ -293,9 +302,11 @@ export default () => {
           { name: '李四', phone: '16873452678', email: 'lisi@gmail.com' },
         ],
       })
-      setLoading(false)
+      // setLoading(false)
     }, 2000)
   }, [])
+
+
   return (
     <div
       style={{
@@ -313,7 +324,7 @@ export default () => {
             wrapperCol={16}
             onAutoSubmit={console.log}
           >
-            <SchemaField schema={schema} />
+            <SchemaField schema={schemaValue} />
             <FormButtonGroup.FormItem>
               <Submit block size="large">
                 提交
