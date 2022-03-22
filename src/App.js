@@ -1,5 +1,9 @@
 
 
+// Create 方法
+import * as create from "./create";
+
+
 function App() {
   return (
     <div>
