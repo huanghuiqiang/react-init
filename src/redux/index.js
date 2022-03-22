@@ -43,4 +43,32 @@ function createStore(reducer) {
   return store;
 }
 
-export { createStore };
+/**
+ * 
+ * @param {Object} reducerMap 
+ * @return {object} reducer
+ */
+function combineReducers(reducerMap) {
+  const reducerKeys = Object.keys(reducerMap);
+
+  const reducer = (state = {}, action) => {
+    const newState = {};
+
+    for(let i = 0; i < reducerKeys.length; i++) {
+      // reducerMap里面每个键的值都是一个reducer，我们把它拿出来运行下就可以得到对应键新的state值
+      // 然后将所有reducer返回的state按照参数里面的key组装好
+      // 最后再返回组装好的newState就行
+      
+      const key = reducerKeys[i];
+      const currentReducer = reducerMap[key];
+      const prevState = state[key];
+      newState[key] = currentReducer(prevState, action);
+    }
+
+    return newState;
+  }
+
+  return reducer;
+}
+
+export { createStore, combineReducers };

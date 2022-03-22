@@ -1,10 +1,11 @@
-import { createStore } from './redux/createStore';
+import { createStore, combineReducers } from './redux';
+// import { createStore, combineReducers } from 'redux';
 
-const initState = {
+const initMilkState = {
   milk: 0
 };
 
-function reducer(state = initState, action) {
+function initMilkReducer(state = initMilkState, action) {
   switch (action.type) {
     case 'PUT_MILK':
     return {...state, milk: state.milk + action.count};
@@ -14,6 +15,24 @@ function reducer(state = initState, action) {
     return state;
   }
 }
+
+const initRiceState = {
+  rice: 0
+};
+
+const initRiceReducer = (state = initRiceState, action) => {
+  switch(action.type) {
+    case 'PUT_RICE':
+      return {...state, rice: state.rice + action.count};
+    case 'TAKE_RICE':
+      return {...state, rice: state.rice - action.count};
+    default:
+      return state;
+  }
+}
+
+
+const reducer = combineReducers({milkState: initMilkReducer, riceState: initRiceReducer});
 
 let store = createStore(reducer);
 
