@@ -1,7 +1,7 @@
 
 
 // Create 方法
-import * as create from "./create";
+import * as createStore from "./create";
 
 
 function App() {

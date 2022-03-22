@@ -21,6 +21,7 @@ function createStore(reducer) {
   }
 
   function dispatch(action) {
+    // reducer的作用是在发布事件的时候改变state，所以我们的dispatch在执行回调前应该先执行reducer,用reducer的返回值重新给state赋值
     state = reducer(state, action);
 
     for(let i = 0; i < listeners.length; i++) {
