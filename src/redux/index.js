@@ -89,26 +89,29 @@ function combineReducers(reducerMap) {
 }
 
 
+function compose(...funcs) {
+  return funcs.reduce((a, b) => (...args) => a(b(...args)));
+}
+
+
 /**
  * 
  * @param { function } middleware 
  * @returns { function } enhancer
  */
-function applyMiddleware(middleware) {
+function applyMiddleware(...middlewares) {
   const enhancer = (createStore) => {
     const newCreateStore = (reducer) => {
       const store = createStore(reducer);
 
-      // 将middleware拿过来执行下，传入store
-      // 得到第一层函数
-      const func = middleware(store);
-
-      // 解构出原始的dispatch
+      // 多个middleware，先解构出dispatch => newDispatch的结构
+      const chain = middlewares.map(middleware => middleware(store));
       const { dispatch } = store;
 
-      // 将原始的dispatch函数传给func执行
-      // 得到增强版的dispatch
-      const newDispatch = func(dispatch);
+      // 用compose得到一个组合了所有newDispatch的函数
+      const newDispatchGen = compose(...chain);
+      // 执行这个函数得到newDispatch
+      const newDispatch = newDispatchGen(dispatch);
 
       // 返回的时候用增强版的newDispatch替换原始的dispatch
       return {...store, dispatch:  newDispatch}

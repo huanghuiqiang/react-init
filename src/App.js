@@ -7,7 +7,7 @@ import * as createStore from "./create";
 function App() {
   return (
     <div>
-      hello,world
+      手写redux
     </div>
   );
 }

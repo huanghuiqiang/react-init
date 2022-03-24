@@ -48,9 +48,19 @@ function logger(store) {
   }
 }
 
+function logger2(store) {
+  return function(next) {
+    return function(action) {
+      let result = next(action);
+      console.log('logger2');
+      return result
+    }
+  }
+}
+
 let store = createStore(
     reducer,
-    applyMiddleware(logger)
+    applyMiddleware(logger, logger2)
   );
 
 // subscribe其实就是订阅store的变化，一旦store发生了变化，传入的回调函数就会被调用
