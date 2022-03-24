@@ -1,5 +1,5 @@
-import { createStore, combineReducers } from './redux';
-// import { createStore, combineReducers } from 'redux';
+import { createStore, combineReducers, applyMiddleware } from './redux';
+// import { createStore, combineReducers, applyMiddleware } from 'redux';
 
 const initMilkState = {
   milk: 0
@@ -34,7 +34,24 @@ const initRiceReducer = (state = initRiceState, action) => {
 
 const reducer = combineReducers({milkState: initMilkReducer, riceState: initRiceReducer});
 
-let store = createStore(reducer);
+
+function logger(store) {
+  return function(next) {
+    return function(action) {
+      console.group(action.type);
+      console.info('dispatching', action);
+      let result = next(action);
+      console.log('next state', store.getState());
+      console.groupEnd();
+      return result;
+    }
+  }
+}
+
+let store = createStore(
+    reducer,
+    applyMiddleware(logger)
+  );
 
 // subscribe其实就是订阅store的变化，一旦store发生了变化，传入的回调函数就会被调用
 // 如果是结合页面更新，更新的操作就是在这里执行

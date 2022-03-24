@@ -11,8 +11,25 @@
  * store.getState:一个简单的方法，返回当前的state。
  */
 
+/**
+ * 
+ * @param {object} reducer 
+ * @returns {object} store
+ */
+function createStore(reducer, enhancer) {
+  // 先处理enhancer
+  // 如果enhancer存在并且是函数
+  // 我们将createStore作为参数传给他
+  // 他应该返回一个新的createStore给我
+  // 我再拿这个新的createStore执行，应该得到一个store
+  // 直接返回这个store就行
 
-function createStore(reducer) {
+  if (enhancer && typeof enhancer === 'function') {
+    const newCreateStore = enhancer(createStore);
+    const newStore = newCreateStore(reducer);
+    return newStore;
+  }
+
   let state;
   let listeners = [];
 
@@ -71,4 +88,39 @@ function combineReducers(reducerMap) {
   return reducer;
 }
 
-export { createStore, combineReducers };
+
+/**
+ * 
+ * @param { function } middleware 
+ * @returns { function } enhancer
+ */
+function applyMiddleware(middleware) {
+  const enhancer = (createStore) => {
+    const newCreateStore = (reducer) => {
+      const store = createStore(reducer);
+
+      // 将middleware拿过来执行下，传入store
+      // 得到第一层函数
+      const func = middleware(store);
+
+      // 解构出原始的dispatch
+      const { dispatch } = store;
+
+      // 将原始的dispatch函数传给func执行
+      // 得到增强版的dispatch
+      const newDispatch = func(dispatch);
+
+      // 返回的时候用增强版的newDispatch替换原始的dispatch
+      return {...store, dispatch:  newDispatch}
+    }
+    return newCreateStore;
+  }
+
+  return enhancer;
+}
+
+export { 
+  createStore,
+  combineReducers,
+  applyMiddleware
+};
